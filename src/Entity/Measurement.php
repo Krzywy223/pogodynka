@@ -18,14 +18,10 @@ class Measurement
     #[ORM\JoinColumn(nullable: false)]
     private ?Location $location = null;
 
-    /**
-     * Przechowujemy surowy timestamp w milisekundach.
-     * Kolumna w DB nazywa się nadal `date`.
-     */
-    #[ORM\Column(type: Types::BIGINT, name: 'date')]
-    private int $dateMs = 0;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 0)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 1)]
     private ?string $celsius = null;
 
     public function getId(): ?int
@@ -44,36 +40,14 @@ class Measurement
         return $this;
     }
 
-    /**
-     * Wygodny getter zwracający DateTime z pola w ms.
-     * Zwracamy DateTimeImmutable w lokalnej strefie (bo @timestamp jest w UTC).
-     */
-    public function getDate(): \DateTimeImmutable
+    public function getDate(): ?\DateTimeInterface
     {
-        $dt = new \DateTimeImmutable('@' . intdiv($this->dateMs, 1000));
-        return $dt->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+        return $this->date;
     }
 
-    /**
-     * Setter przyjmujący DateTime i zapisujący ms w kolumnie BIGINT.
-     */
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(?\DateTimeInterface $date): static
     {
-        $this->dateMs = $date->getTimestamp() * 1000;
-        return $this;
-    }
-
-    /**
-     * Dostęp do surowej wartości w ms (opcjonalnie, czasem przydatne).
-     */
-    public function getDateMs(): int
-    {
-        return $this->dateMs;
-    }
-
-    public function setDateMs(int $dateMs): static
-    {
-        $this->dateMs = $dateMs;
+        $this->date = $date;
         return $this;
     }
 

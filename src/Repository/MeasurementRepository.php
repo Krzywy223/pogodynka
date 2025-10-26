@@ -20,14 +20,14 @@ class MeasurementRepository extends ServiceEntityRepository
     public function findByLocation(Location $location): array
     {
         $qb = $this->createQueryBuilder('m');
-
-        $nowMs = (int) (microtime(true) * 1000);
-
         $qb->where('m.location = :location')
-            ->andWhere('m.dateMs > :now')
             ->setParameter('location', $location)
-            ->setParameter('now', $nowMs);
+            ->andWhere('m.date > :now')
+            ->setParameter('now', date('Y-m-d'));
 
-        return $qb->getQuery()->getResult();
+        $query = $qb->getQuery();
+        $result = $query->getResult();
+        return $result;
+
     }
 }
