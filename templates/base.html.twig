@@ -42,10 +42,16 @@
                     <a class="nav-link active" aria-current="page" href="http://localhost:53667/measurement">Pomiary</a>
                 </li>
             </ul>
+
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ path('app_login') }}">Login</a>
+            {% endif %}
         </div>
     </div>
 </nav>
-
-{% block body %}{% endblock %}
+{% block body %}
+{% endblock %}
 </body>
 </html>
